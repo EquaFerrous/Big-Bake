@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,9 @@ public class ProgressValue
 {
     // --------- VARIABLES ---------
 
+    public event Action OnChange;
+
+    private float _currentValue = 0;
     private float _underdoneLength = 0;
     private float _perfectLength = 0;
     private float _overdoneLength = 0;
@@ -52,7 +56,15 @@ public class ProgressValue
         }
     } 
 
-    public float CurrentValue { get; private set; }
+    public float CurrentValue
+    {
+        get => _currentValue;
+        private set
+        {
+            _currentValue = value;
+            OnChange?.Invoke();
+        }
+    }
 
     public float MaxValue { get; private set; }
 

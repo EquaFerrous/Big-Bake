@@ -17,7 +17,16 @@ public class ProgressBar : MonoBehaviour
         get => _progressValue;
         set
         {
+            if (_progressValue != null)
+            {
+                _progressValue.OnChange -= UpdateValueBar;
+            }
+
             _progressValue = value;
+            if (_progressValue != null)
+            {
+                _progressValue.OnChange += UpdateValueBar;
+            }
             SetupProgressBar();
         }
     }
@@ -37,7 +46,6 @@ public class ProgressBar : MonoBehaviour
 
     private void SetupProgressBar()
     {
-        Debug.Log("Setup");
         float underdoneBarLength = ProgressValue.MinPerfectValue / ProgressValue.MaxValue;
         underdoneBar.localScale = new Vector3(underdoneBarLength, 1, 1);
 
