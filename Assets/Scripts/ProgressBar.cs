@@ -12,6 +12,10 @@ public class ProgressBar : MonoBehaviour
 
     private ProgressValue _progressValue;
 
+    /// <summary>
+    /// The ProgressValue attached to this Progress Bar.
+    /// The bar automatically updates when this value changes.
+    /// </summary>
     public ProgressValue ProgressValue
     {
         get => _progressValue;
@@ -33,10 +37,7 @@ public class ProgressBar : MonoBehaviour
 
     // ------ DEFAULT METHODS ------
 
-    private void Start()
-    {
-        ProgressValue = new ProgressValue(50, 30, 10);
-    }
+
 
     // ------ PUBLIC METHODS -------
 
