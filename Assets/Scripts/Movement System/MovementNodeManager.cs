@@ -72,13 +72,6 @@ public class MovementNodeManager : MonoBehaviour
         }
 
         _nodeList.Add(node);
-        foreach (MovementNode connectedNode in node.ConnectedNodes)
-        {
-            if (!connectedNode.ConnectedNodes.Contains(node))
-            {
-                connectedNode.ConnectNode(node);
-            }
-        }
     }
 
     /// <summary>

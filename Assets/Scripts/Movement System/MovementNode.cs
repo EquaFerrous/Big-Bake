@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +12,8 @@ public class MovementNode : MonoBehaviour
     // --------- VARIABLES ---------
 
     [SerializeField] private List<MovementNode> _connectedNodes = new();
+    private readonly Dictionary<MovementNode, float> _nodeDistances = new();
+
 
     public List<MovementNode> ConnectedNodes
     {
@@ -20,12 +23,23 @@ public class MovementNode : MonoBehaviour
         }
     }
 
+    public Dictionary<MovementNode, float> NodeDistances
+    {
+        get
+        {
+            return new Dictionary<MovementNode, float>(_nodeDistances);
+        }
+    }
+
 
     // ------ DEFAULT METHODS ------
 
     private void Start()
     {
         MovementNodeManager.Instance.RegisterNode(this); // Vital to be set-up correctly.
+
+        SetupReverseConnections();
+        SetupDistances();
     }
 
     private void OnDrawGizmosSelected()
@@ -69,6 +83,27 @@ public class MovementNode : MonoBehaviour
 
     // ------ PRIVATE METHODS ------
 
+    /// <summary>
+    /// Ensures all connected nodes are connected back to this node.
+    /// </summary>
+    private void SetupReverseConnections()
+    {
+        foreach (MovementNode connectedNode in ConnectedNodes)
+        {
+            if (!connectedNode.ConnectedNodes.Contains(this))
+            {
+                connectedNode.ConnectNode(this);
+            }
+        }
+    }
 
+    private void SetupDistances()
+    {
+        foreach (MovementNode node in ConnectedNodes)
+        {
+            float distanceToNode = (node.transform.position - transform.position).magnitude;
+            _nodeDistances.Add(node, distanceToNode);
+        }
+    }
 
 }
