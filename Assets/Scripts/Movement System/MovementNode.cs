@@ -34,11 +34,15 @@ public class MovementNode : MonoBehaviour
 
     // ------ DEFAULT METHODS ------
 
+    private void Awake()
+    {
+        SetupReverseConnections();
+    }
+
     private void Start()
     {
         MovementNodeManager.Instance.RegisterNode(this); // Vital to be set-up correctly.
 
-        SetupReverseConnections();
         SetupDistances();
     }
 
@@ -102,7 +106,7 @@ public class MovementNode : MonoBehaviour
         foreach (MovementNode node in ConnectedNodes)
         {
             float distanceToNode = (node.transform.position - transform.position).magnitude;
-            _nodeDistances.Add(node, distanceToNode);
+            _nodeDistances[node] = distanceToNode;
         }
     }
 

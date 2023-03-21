@@ -8,8 +8,11 @@ public class NodeMovementBehaviour : MonoBehaviour
 {
     // --------- VARIABLES ---------
 
+    public MovementNode end;
+
     [Header("Movement Settings")]
     [SerializeField][Min(0)] private float movementSpeed;
+    [SerializeField] private MovementNode startNode;
 
     private static readonly float MOVEMENT_ACCURACY = 0.01f;
 
@@ -17,6 +20,7 @@ public class NodeMovementBehaviour : MonoBehaviour
 
     private readonly Queue<MovementNode> _movementQueue = new();
     private MovementNode _currentTarget;
+    private MovementNode _currentNode;
 
 
     public bool IsMoving => _currentTarget != null;
@@ -25,8 +29,18 @@ public class NodeMovementBehaviour : MonoBehaviour
 
     // ------ DEFAULT METHODS ------
 
+    private void Start()
+    {
+        _currentNode = startNode;
+    }
+
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            PathToNode(end);
+        }
+
         if (!IsMoving)
         {
             if (_movementQueue.Count > 0)
@@ -46,9 +60,21 @@ public class NodeMovementBehaviour : MonoBehaviour
     /// Adds <paramref name="destinationNode"/> to the movement queue.
     /// </summary>
     /// <param name="destinationNode">The destination node to path to.</param>
-    public void AddToMovementQueue(DestinationNode destinationNode)
+    public void AddToMovementQueue(MovementNode node)
     {
-        _movementQueue.Enqueue(destinationNode);
+        _movementQueue.Enqueue(node);
+    }
+
+    public void PathToNode(MovementNode destination)
+    {
+        NodeTraverser traverser = new NodeTraverser(_currentNode, destination);
+        Queue<MovementNode> path = traverser.Path;
+
+        int pathLength = path.Count;
+        for (int index = 0; index < pathLength; index++)
+        {
+            AddToMovementQueue(path.Dequeue());
+        }
     }
     
     // ------ PRIVATE METHODS ------
@@ -74,6 +100,7 @@ public class NodeMovementBehaviour : MonoBehaviour
     private void FinishCurrentMovement()
     {
         transform.position = _currentTarget.transform.position;
+        _currentNode = _currentTarget;
         OnMovementCompleted?.Invoke(_currentTarget);
         _currentTarget = null;
     }
